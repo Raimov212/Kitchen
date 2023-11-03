@@ -1,0 +1,17 @@
+.inputFileBox {
+  text-align: center;
+  border: 1.6px dashed rgba(0, 0, 0, 0.658);
+  border-radius: 10px;
+  height: 60px;
+  text-align: center;
+}
+label {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+input[type="file"] {
+  display: none;
+}
