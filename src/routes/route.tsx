@@ -9,6 +9,7 @@ import { Provider } from "react-redux";
 import store from "../redux/store";
 
 const MenuLazy = lazy(() => import("../pages/Menu"));
+const FoodsLazy = lazy(() => import("../pages/Foods"));
 const AdvertisingLazy = lazy(() => import("../pages/Advertising"));
 const EmployeeLazy = lazy(() => import("../pages/Employee"));
 
@@ -26,6 +27,14 @@ const MainPage = () => {
                 element={
                   <Suspense fallback={<Loading />}>
                     <MenuLazy />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="foods/:id"
+                element={
+                  <Suspense fallback={<Loading />}>
+                    <FoodsLazy />
                   </Suspense>
                 }
               />

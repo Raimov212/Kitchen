@@ -10,12 +10,16 @@ export type FoodCategoryTypeData = {
   nameUz: string;
   nameRu: string;
   nameEn: string;
+  descriptionUz: string;
+  descriptionRu: string;
+  descriptionEn: string;
+  categoryId: string | undefined;
   status: string;
+  foodType: string;
   photoUrl: string;
-  startTime: string;
-  endTime: string;
 };
 
 export type FoodCategoryType = {
   setOpenCreateGoodsProps: Dispatch<SetStateAction<boolean>>;
+  id: string | undefined;
 };

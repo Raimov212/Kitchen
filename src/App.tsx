@@ -7,6 +7,7 @@ import Error from "./components/Error/Error";
 import { LoginContext } from "./hook/contextAuth";
 
 const MenuLazy = lazy(() => import("./pages/Menu"));
+const FoodsLazy = lazy(() => import("./pages/Foods"));
 const AdvertisingLazy = lazy(() => import("./pages/Advertising"));
 const EmployeeLazy = lazy(() => import("./pages/Employee"));
 
@@ -35,6 +36,14 @@ const App = () => {
             element={
               <Suspense fallback={<Loading />}>
                 <MenuLazy />
+              </Suspense>
+            }
+          />
+          <Route
+            path="foods/:id"
+            element={
+              <Suspense fallback={<Loading />}>
+                <FoodsLazy />
               </Suspense>
             }
           />

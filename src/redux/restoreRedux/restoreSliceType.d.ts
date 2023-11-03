@@ -12,19 +12,33 @@ export interface foodListType {
 }
 
 export interface restoreListType {
-  // map(
-  //   arg0: (item: {
-  //     id: string | undefined;
-  //     data: foodListType[];
-  //   }) => false | import("react/jsx-runtime").JSX.Element[]
-  // ): import("react").ReactNode;
   id: string;
   restoreName: string;
   data: foodListType[];
+}
+
+export interface categoriesType {
+  id: string;
+  name: string;
+  status: string;
+  photoUrl: string;
+  startTime: string;
+  endTime: string;
+}
+
+export interface foodsType {
+  id: string;
+  name: string;
+  description: string;
+  photoUrl: string;
+  status: string;
+  foodType: string;
 }
 
 export interface RestoreDataType {
   token: string;
   restoreList: DataType[];
   foodList: foodListType[];
+  categoriesAll: categoriesType[];
+  foodsAll: foodsType[];
 }
