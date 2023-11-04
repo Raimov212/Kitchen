@@ -17,6 +17,19 @@ const Menu = () => {
   const [openCreateUsers, setOpenCreateUsers] = useState<boolean>(false);
   const [openSettings, setOpenSettings] = useState<string>("");
   const [openDeleteModal, setOpenDeleteModal] = useState<boolean>(false);
+  const [statusCode, setStatusCode] = useState("");
+  const [successStatus, setSuccessStatus] = useState("");
+
+  const [createFoodsCategoryState, setCreateFoodsCategoryState] = useState({
+    nameUz: "",
+    nameRu: "",
+    nameEn: "",
+    status: "",
+    photoUrl: "",
+    startTime: "",
+    endTime: "",
+  });
+
   const dispatch = useAppDispatch();
 
   const categoriesAllData =
@@ -24,7 +37,7 @@ const Menu = () => {
 
   useEffect(() => {
     getAllCategoryFood();
-  }, [0]);
+  }, []);
 
   const getAllCategoryFood = async () => {
     const res = await apiToken.get("/categories/all", {
@@ -49,6 +62,48 @@ const Menu = () => {
     console.log("res", res);
   };
 
+  const createUserForm = async (e: { preventDefault: () => void }) => {
+    e.preventDefault();
+
+    if (
+      createFoodsCategoryState.nameUz === "" ||
+      createFoodsCategoryState.nameRu === "" ||
+      createFoodsCategoryState.nameEn === "" ||
+      createFoodsCategoryState.startTime === "" ||
+      createFoodsCategoryState.endTime === "" ||
+      createFoodsCategoryState.status === "" ||
+      createFoodsCategoryState.photoUrl === null
+    ) {
+      setStatusCode("Malumotlar to'liq kiritilmagan");
+    }
+
+    try {
+      const res = await apiToken.post(
+        "/categories/create",
+        createFoodsCategoryState,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (res.status === 200) {
+        setStatusCode("");
+        setSuccessStatus("Categoriya ro'yhatdan o'tkazildi");
+      }
+
+      console.log("response", res);
+    } catch (error) {
+      if (
+        error.response.data.errorMessage === "Category name is already exist"
+      ) {
+        setStatusCode("Bu kategoriya oldin ro'yxatdan o'tkazilgan");
+      }
+      console.log("error", error);
+    }
+  };
+
   // console.log("categoriesAllData", categoriesAllData);
 
   return (
@@ -69,26 +124,37 @@ const Menu = () => {
         ></div>
       )}
       {openCreateUsers && (
-        <CreateFoodsCategory setOpenCreateGoodsProps={setOpenCreateUsers} />
+        <CreateFoodsCategory
+          createFoodsCategoryState={createFoodsCategoryState}
+          setCreateFoodsCategoryState={setCreateFoodsCategoryState}
+          setOpenCreateGoodsProps={setOpenCreateUsers}
+          createUserForm={createUserForm}
+          statusCode={statusCode}
+          successStatus={successStatus}
+        />
       )}
       <div className="grid grid-cols-3 gap-4">
         {categoriesAllData?.map((item) => (
           <div className="relative" key={item.id}>
             <Link
               to={`/foods/${item.id}`}
-              className="w-full h-[200px] bg-secondary rounded-lg flex flex-col
+              className="w-full h-[200px] bg-primary rounded-lg flex flex-col
            items-center justify-center gap-2 shadow-md "
             >
-              <img src={item.photoUrl} alt="food" />
-              <div className="font-semibold">{item.name}</div>
+              <img
+                src={item.photoUrl}
+                alt="food"
+                className="w-full h-[170px] object-cover rounded-lg"
+              />
+              <div className="font-semibold text-white">{item.name}</div>
             </Link>
             <button
               onClick={() => setOpenSettings(openSettings ? "" : item.id)}
-              className="absolute top-4 right-4 cursor-pointer w-8 flex items-center justify-center h-8 z-50"
+              className="absolute top-4 right-4 cursor-pointer w-8 flex items-center justify-center h-8 z-20"
             >
               <ThreeDot />
             </button>
-            <div className="absolute top-0 right-[-40px] z-20 transition-all ease-in-out">
+            <div className="absolute top-0 right-[-40px] z-10 transition-all ease-in-out">
               {openSettings === item.id && (
                 <div className="flex flex-col gap-1">
                   <button
@@ -106,7 +172,7 @@ const Menu = () => {
             {openDeleteModal && (
               <div
                 className="fixed left-[35%] top-[300px] bg-primary w-[50vh] h-[20vh] 
-               overflow-hidden z-50 rounded-xl py-[32px] px-[40px] flex flex-col items-center justify-center gap-2 "
+               overflow-hidden rounded-xl py-[32px] px-[40px] flex flex-col items-center justify-center gap-2 "
               >
                 <div className="text-white">Malumotni o'chirmoqchimiz</div>
                 <div className="flex gap-2">

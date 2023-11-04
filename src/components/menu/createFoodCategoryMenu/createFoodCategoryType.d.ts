@@ -12,10 +12,15 @@ export type FoodCategoryTypeData = {
   nameEn: string;
   status: string;
   photoUrl: string;
-  startTime: string;
-  endTime: string;
+  startTime?: string;
+  endTime?: string;
 };
 
 export type FoodCategoryType = {
+  createFoodsCategoryState: FoodCategoryTypeData;
+  setCreateFoodsCategoryState: Dispatch<SetStateAction<FoodCategoryTypeData>>;
+  statusCode: string;
+  successStatus: string;
+  createUserForm: (e: { preventDefault: () => void }) => Promise<void>;
   setOpenCreateGoodsProps: Dispatch<SetStateAction<boolean>>;
 };

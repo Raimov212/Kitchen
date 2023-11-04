@@ -1,6 +1,6 @@
 import { NavbarRingtone } from "../assets/logos/navbar-logo/NavbarRingtone";
 import { NavbarClock } from "../assets/logos/navbar-logo/NavbarClock";
-import { NavbarSearch } from "../assets/logos/navbar-logo/NavbarSearch";
+// import { NavbarSearch } from "../assets/logos/navbar-logo/NavbarSearch";
 
 const Navbar = () => {
   return (
@@ -13,7 +13,7 @@ const Navbar = () => {
         <div className="cursor-pointer">
           <NavbarClock />
         </div>
-        <div className=" text-secondary relative px-[12x] py-[8px] bg-secondary w-[350px] rounded-[10px] flex items-center">
+        {/* <div className=" text-secondary relative px-[12x] py-[8px] bg-secondary w-[350px] rounded-[10px] flex items-center">
           <div className="ml-2">
             <NavbarSearch />
           </div>
@@ -22,7 +22,7 @@ const Navbar = () => {
             placeholder="Search"
             className="pl-[4px] w-[90%] bg-none outline-none bg-secondary "
           />
-        </div>
+        </div> */}
       </div>
     </div>
   );

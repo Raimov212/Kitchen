@@ -20,7 +20,7 @@ const restoreSlice = createSlice({
       state.categoriesAll.push(action.payload);
     },
     getAllFoods: (state, action: PayloadAction<foodsType>) => {
-      state.foodsAll.push(action.payload);
+      state.foodsAll = [...state.foodsAll, action.payload];
     },
   },
 });

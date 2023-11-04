@@ -43,7 +43,7 @@ const Sidebar = () => {
           to={"/advertising"}
         >
           <SidebarAdvertising />
-          {openSidebar && <div className="text-base">Yangi Ovqatlar</div>}
+          {openSidebar && <div className="text-base">Reklama</div>}
         </NavLink>
         <NavLink
           className={({ isActive }) =>

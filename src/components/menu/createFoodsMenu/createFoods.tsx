@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect, ChangeEvent } from "react";
-import { FoodCategoryType, FoodCategoryTypeData } from "./createFoodsType";
+import { FoodCategoryType } from "./createFoodsType";
 import apiToken from "../../../api/token";
 // import { t } from "i18next";
 import { AddImgButton } from "../../../assets/logos/AddImgButton";
@@ -32,19 +32,20 @@ const CreateFoods: React.FC<FoodCategoryType> = ({
 
   console.log("statusFood", statusFood);
 
-  const [createFoodsCategoryState, setCreateFoodsCategoryState] =
-    useState<FoodCategoryTypeData>({
-      nameUz: "",
-      nameRu: "",
-      nameEn: "",
-      descriptionUz: "",
-      descriptionRu: "",
-      descriptionEn: "",
-      status: "",
-      photoUrl: "",
-      categoryId: id,
-      foodType: "",
-    });
+  const [createFoodsCategoryState, setCreateFoodsCategoryState] = useState({
+    nameUz: "",
+    nameRu: "",
+    nameEn: "",
+    descriptionUz: "",
+    descriptionRu: "",
+    descriptionEn: "",
+    status: "",
+    photoUrl: "",
+    categoryId: id,
+    foodType: "",
+    price: 0,
+    kkal: 0,
+  });
 
   const handleInputChange = useCallback(
     (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -81,8 +82,8 @@ const CreateFoods: React.FC<FoodCategoryType> = ({
   const handleChangeSaveImage = async () => {
     if (imageUpload == null) return;
     const imageRef = ref(storage, `create-foods-image/${imageUpload.name}`);
-    await uploadBytes(imageRef, imageUpload).then((snapshot) => {
-      return getDownloadURL(snapshot.ref).then((url) => {
+    await uploadBytes(imageRef, imageUpload).then(async (snapshot) => {
+      return await getDownloadURL(snapshot.ref).then((url) => {
         return setCreateFoodsCategoryState((prev) => ({
           ...prev,
           photoUrl: url,
@@ -161,13 +162,16 @@ const CreateFoods: React.FC<FoodCategoryType> = ({
   return (
     <div
       className="fixed left-[25%] top-[50px] bg-white w-[100vh] h-[90vh] 
-     overflow-hidden z-10 rounded-xl py-[32px] px-[40px] flex flex-col gap-2 "
+     overflow-hidden z-10 rounded-xl py-[32px] px-[40px] flex flex-col gap-2"
     >
       {/* <div className="flex justify-end">
         <ModalClose />
       </div> */}
       <div className="text-2xl font-medium ">Kategoriya malumotlari</div>
-      <form onSubmit={createUserForm} className="flex flex-col gap-4 ">
+      <form
+        onSubmit={createUserForm}
+        className="flex flex-col gap-4 overflow-y-scroll"
+      >
         <div className="flex justify-between gap-8">
           <div className="w-full">
             <div className="flex flex-col gap-2 ">
@@ -270,23 +274,32 @@ const CreateFoods: React.FC<FoodCategoryType> = ({
               <option value="SET">O'zgaruvchan</option>
             </select>
           </div>
-          {/* <div className="flex flex-col gap-2 w-full">
-            <div>Ovqat categoriyasi</div>
-            <select
-              className="outline-none border-[1.8px] placeholder:text-black placeholder:text-sm border-primary rounded-lg p-2 visible focus:border-secondary w-[280px]"
-              value={categoryType}
-              onChange={handleCategoryCheck}
-            >
-              <option value="">Categoriyani tanlang</option>
-              {categoriesListData?.map((item) => (
-                <option value={item.id} key={item.id}>
-                  {item.name}
-                </option>
-              ))}
-              <option value="SIMPLE">Oddiy</option>
-              <option value="SET">O'zgaruvchan</option>
-            </select>
-          </div> */}
+        </div>
+        <div>
+          <div className="flex flex-col gap-2">
+            <div className="text-md font-medium">Kila kaloriya</div>
+            <input
+              type="number"
+              name="kkal"
+              className="outline-none border-[1.8px] placeholder:text-black placeholder:text-sm border-primary rounded-lg p-2 visible focus:border-secondary w-full"
+              placeholder="Kila kaloriya"
+              value={createFoodsCategoryState.kkal}
+              autoComplete="on"
+              onChange={handleInputChange}
+            />
+          </div>
+          <div className="flex flex-col gap-2">
+            <div className="text-md font-medium">Narxi</div>
+            <input
+              type="number"
+              name="price"
+              className="outline-none border-[1.8px] placeholder:text-black placeholder:text-sm border-primary rounded-lg p-2 visible focus:border-secondary w-full"
+              placeholder="Narxi"
+              value={createFoodsCategoryState.price}
+              autoComplete="on"
+              onChange={handleInputChange}
+            />
+          </div>
         </div>
         <div className="flex gap-4 items-end">
           <div className="flex flex-col w-full">
@@ -308,7 +321,6 @@ const CreateFoods: React.FC<FoodCategoryType> = ({
                   type="file"
                   name="userPasswordConfirm"
                   className="outline-none border-[1px] border-primary rounded-lg p-2 visible focus:border-secondary w-full"
-                  placeholder="Parolni tasdiqlash"
                   autoComplete="on"
                   onChange={handleFileChange}
                 />
@@ -326,7 +338,7 @@ const CreateFoods: React.FC<FoodCategoryType> = ({
         <button
           type="submit"
           disabled={createFoodsCategoryState.photoUrl ? false : true}
-          className={`rounded-lg py-2 px-11 ml-52 bg-primary opacity-40 text-white w-[200px] h-auto `}
+          className={`rounded-lg py-2 px-11 ml-52 bg-primary text-white w-[200px] h-auto `}
         >
           Saqlash
         </button>
