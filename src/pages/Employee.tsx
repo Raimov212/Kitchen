@@ -10,6 +10,8 @@ const Employee = () => {
   const token = useAppSelector((state) => state.restore.token);
   const [openCreateUsers, setOpenCreateUsers] = useState<boolean>(false);
   const [dataEmployee, setDataEmployee] = useState();
+  const [openSettings, setOpenSettings] = useState("");
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [statusCode, setStatusCode] = useState("");
   const [successStatus, setSuccessStatus] = useState("");
 
@@ -21,6 +23,35 @@ const Employee = () => {
     photoUrl: "",
     role: "",
   });
+
+  const getAllEmployee = async () => {
+    const res = await apiToken.get("/admin/all", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    setDataEmployee(res.data);
+    console.log("res", res);
+  };
+
+  useEffect(() => {
+    getAllEmployee();
+  }, []);
+
+  const handleClickDelete = async (id: string) => {
+    const res = await apiToken.delete(`/admin/delete-account/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (res.status === 200) {
+      setOpenDeleteModal((prev) => !prev);
+      getAllEmployee();
+    }
+    console.log("res", res);
+  };
 
   const createUserForm = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
@@ -51,27 +82,10 @@ const Employee = () => {
 
       console.log("response", res);
     } catch (error) {
-      if (
-        error.response.data.errorMessage === "Category name is already exist"
-      ) {
+      if (error) {
         setStatusCode("Bu kategoriya oldin ro'yxatdan o'tkazilgan");
       }
-      console.log("error", error);
     }
-  };
-
-  useEffect(() => {
-    getAllEmployee();
-  }, []);
-  const getAllEmployee = async () => {
-    const res = await apiToken.get("/admin/all", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    setDataEmployee(res.data);
-    console.log("res", res);
   };
 
   return (
@@ -101,7 +115,14 @@ const Employee = () => {
           successStatus={successStatus}
         />
       )}
-      <EmployeeItem data={dataEmployee} />
+      <EmployeeItem
+        data={dataEmployee}
+        openSettings={openSettings}
+        openDeleteModal={openDeleteModal}
+        setOpenSettings={setOpenSettings}
+        setOpenDeleteModal={setOpenDeleteModal}
+        handleClickDelete={handleClickDelete}
+      />
     </div>
   );
 };

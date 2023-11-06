@@ -3,41 +3,30 @@ import { ThreeDot } from "../assets/logos/ThreeDot";
 import { useEffect, useState } from "react";
 import CreateFoodsCategory from "../components/menu/createFoodCategoryMenu/createFoodCategory";
 import { Link } from "react-router-dom";
-// import { Data } from "../data/data";
 import apiToken from "../api/token";
-import { useAppDispatch, useAppSelector } from "../hook/redux";
-import { getAllCategories } from "../redux/restoreRedux/restoreSlice";
+import { useAppSelector } from "../hook/redux";
 import { categoriesType } from "../redux/restoreRedux/restoreSliceType";
+import { FoodCategoryTypeData } from "../components/menu/createFoodCategoryMenu/createFoodCategoryType";
 
 const Menu = () => {
   const token = useAppSelector((state) => state.restore.token);
-  const categoriesAllDataType = useAppSelector(
-    (state) => state.restore.categoriesAll
-  );
   const [openCreateUsers, setOpenCreateUsers] = useState<boolean>(false);
   const [openSettings, setOpenSettings] = useState<string>("");
   const [openDeleteModal, setOpenDeleteModal] = useState<boolean>(false);
+  const [dataFood, setDataFood] = useState<categoriesType[] | null>(null);
   const [statusCode, setStatusCode] = useState("");
   const [successStatus, setSuccessStatus] = useState("");
 
-  const [createFoodsCategoryState, setCreateFoodsCategoryState] = useState({
-    nameUz: "",
-    nameRu: "",
-    nameEn: "",
-    status: "",
-    photoUrl: "",
-    startTime: "",
-    endTime: "",
-  });
-
-  const dispatch = useAppDispatch();
-
-  const categoriesAllData =
-    categoriesAllDataType[0] as unknown as categoriesType[];
-
-  useEffect(() => {
-    getAllCategoryFood();
-  }, []);
+  const [createFoodsCategoryState, setCreateFoodsCategoryState] =
+    useState<FoodCategoryTypeData>({
+      nameUz: "",
+      nameRu: "",
+      nameEn: "",
+      status: "",
+      photoUrl: "",
+      startTime: "",
+      endTime: "",
+    });
 
   const getAllCategoryFood = async () => {
     const res = await apiToken.get("/categories/all", {
@@ -45,8 +34,11 @@ const Menu = () => {
         Authorization: `Bearer ${token}`,
       },
     });
-    dispatch(getAllCategories(res.data));
+    setDataFood(res.data);
   };
+  useEffect(() => {
+    getAllCategoryFood();
+  }, []);
 
   const handleClickDelete = async (id: string) => {
     const res = await apiToken.delete(`/categories/delete/${id}`, {
@@ -57,7 +49,7 @@ const Menu = () => {
 
     if (res.status === 200) {
       setOpenDeleteModal((prev) => !prev);
-      window.location.reload();
+      getAllCategoryFood();
     }
     console.log("res", res);
   };
@@ -91,16 +83,29 @@ const Menu = () => {
       if (res.status === 200) {
         setStatusCode("");
         setSuccessStatus("Categoriya ro'yhatdan o'tkazildi");
+
+        setCreateFoodsCategoryState((prev) => ({
+          ...prev,
+          nameUz: "",
+          nameRu: "",
+          nameEn: "",
+          status: "",
+          photoUrl: "",
+          startTime: "",
+          endTime: "",
+        }));
+        setStatusCode("");
+        setSuccessStatus("");
+        getAllCategoryFood();
       }
+
+      setOpenCreateUsers(false);
 
       console.log("response", res);
     } catch (error) {
-      if (
-        error.response.data.errorMessage === "Category name is already exist"
-      ) {
+      if (error) {
         setStatusCode("Bu kategoriya oldin ro'yxatdan o'tkazilgan");
       }
-      console.log("error", error);
     }
   };
 
@@ -134,7 +139,7 @@ const Menu = () => {
         />
       )}
       <div className="grid grid-cols-3 gap-4">
-        {categoriesAllData?.map((item) => (
+        {dataFood?.map((item) => (
           <div className="relative" key={item.id}>
             <Link
               to={`/foods/${item.id}`}
@@ -171,7 +176,7 @@ const Menu = () => {
             </div>
             {openDeleteModal && (
               <div
-                className="fixed left-[35%] top-[300px] bg-primary w-[50vh] h-[20vh] 
+                className="fixed left-[35%] z-30 top-[300px] bg-primary w-[50vh] h-[20vh] 
                overflow-hidden rounded-xl py-[32px] px-[40px] flex flex-col items-center justify-center gap-2 "
               >
                 <div className="text-white">Malumotni o'chirmoqchimiz</div>

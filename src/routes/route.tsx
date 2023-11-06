@@ -14,7 +14,7 @@ const AdvertisingLazy = lazy(() => import("../pages/Advertising"));
 const EmployeeLazy = lazy(() => import("../pages/Employee"));
 
 const MainPage = () => {
-  const [isVisibleRoute, setIsVisibleRoute] = useState<boolean>(false);
+  const [isVisibleRoute, setIsVisibleRoute] = useState(false);
 
   return (
     <Provider store={store}>

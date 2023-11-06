@@ -26,14 +26,19 @@ export type FoodCategoryTypeData = {
 };
 
 export interface DataEmployeeType {
-  data: DataEmployee[];
+  data: DataEmployee[] | undefined;
+  openSettings: string;
+  openDeleteModal: boolean;
+  setOpenSettings: Dispatch<SetStateAction<string>>;
+  setOpenDeleteModal: Dispatch<SetStateAction<boolean>>;
+  handleClickDelete: (id: string) => Promise<void>;
 }
 
 export type FoodCategoryType = {
   createFoodsCategoryState: FoodCategoryTypeData;
   setCreateFoodsCategoryState: Dispatch<SetStateAction<FoodCategoryTypeData>>;
   setOpenCreateGoodsProps: Dispatch<SetStateAction<boolean>>;
-  createUserForm: () => void;
+  createUserForm: (e: { preventDefault: () => void }) => Promise<void>;
   statusCode: string;
   successStatus: string;
 };

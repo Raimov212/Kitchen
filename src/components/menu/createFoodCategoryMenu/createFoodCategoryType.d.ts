@@ -18,7 +18,9 @@ export type FoodCategoryTypeData = {
 
 export type FoodCategoryType = {
   createFoodsCategoryState: FoodCategoryTypeData;
-  setCreateFoodsCategoryState: Dispatch<SetStateAction<FoodCategoryTypeData>>;
+  setCreateFoodsCategoryState: Dispatch<
+    SetStateAction<createFoodsCategoryState>
+  >;
   statusCode: string;
   successStatus: string;
   createUserForm: (e: { preventDefault: () => void }) => Promise<void>;

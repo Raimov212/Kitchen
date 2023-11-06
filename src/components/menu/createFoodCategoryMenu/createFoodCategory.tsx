@@ -1,18 +1,9 @@
 import { useState, useCallback, useEffect, ChangeEvent } from "react";
-import {
-  FoodCategoryType,
-  // FoodCategoryTypeData,
-} from "./createFoodCategoryType";
-// import apiToken from "../../../api/token";
-// import { t } from "i18next";
-// import { ToastContainer, toast } from "react-toastify";
-// import { ModalClose } from "../../assets/logos/ModalClose";
+import { FoodCategoryType } from "./createFoodCategoryType";
 import { AddImgButton } from "../../../assets/logos/AddImgButton";
 import "./Foods.css";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { storage } from "../../../data/firebase";
-// import { useAppSelector } from "../../../hook/redux";
-// import { experimentalSetDeliveryMetricsExportedToBigQueryEnabled } from "firebase/messaging/sw";
 
 type ImageType = File | null;
 
@@ -24,7 +15,6 @@ const CreateFoodsCategory: React.FC<FoodCategoryType> = ({
   statusCode,
   successStatus,
 }): JSX.Element => {
-  // const token = useAppSelector((state) => state.restore.token);
   const selectTimeDate: string[] = [
     "09:00",
     "10:00",
@@ -43,35 +33,22 @@ const CreateFoodsCategory: React.FC<FoodCategoryType> = ({
   const [startTimeFood, setStartTimeFood] = useState("09:00");
   const [endTimeFood, setEndTimeFood] = useState("19:00");
   const [statusFood, setStatusFood] = useState("ACTIVE");
-  // const [statusCode, setStatusCode] = useState<string | null>("");
-  // const [successStatus, setSuccessStatus] = useState("");
 
   console.log("statusFood", statusFood);
 
-  // const [createFoodsCategoryState, setCreateFoodsCategoryState] =
-  //   useState<FoodCategoryTypeData>({
-  //     nameUz: "",
-  //     nameRu: "",
-  //     nameEn: "",
-  //     status: "",
-  //     photoUrl: "",
-  //     startTime: "",
-  //     endTime: "",
-  //   });
-
   const handleInputChange = useCallback(
     (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      setCreateFoodsCategoryState({
-        ...createFoodsCategoryState,
+      setCreateFoodsCategoryState((prev: FoodCategoryType) => ({
+        ...prev,
         [e.target.name]: e.target.value,
-      });
+      }));
     },
-    [createFoodsCategoryState, setCreateFoodsCategoryState]
+    [setCreateFoodsCategoryState]
   );
 
   const handleStartChange = (e: ChangeEvent<HTMLSelectElement>) => {
     setStartTimeFood(e.target.value);
-    setCreateFoodsCategoryState((prev) => ({
+    setCreateFoodsCategoryState((prev: FoodCategoryType) => ({
       ...prev,
       startTime: e.target.value,
     }));
@@ -79,7 +56,7 @@ const CreateFoodsCategory: React.FC<FoodCategoryType> = ({
 
   const handleEndChange = (e: ChangeEvent<HTMLSelectElement>) => {
     setEndTimeFood(e.target.value);
-    setCreateFoodsCategoryState((prev) => ({
+    setCreateFoodsCategoryState((prev: FoodCategoryType) => ({
       ...prev,
       endTime: e.target.value,
     }));
@@ -87,7 +64,7 @@ const CreateFoodsCategory: React.FC<FoodCategoryType> = ({
 
   const handleStatusChange = (e: ChangeEvent<HTMLSelectElement>) => {
     setStatusFood(e.target.value);
-    setCreateFoodsCategoryState((prev) => ({
+    setCreateFoodsCategoryState((prev: FoodCategoryType) => ({
       ...prev,
       status: e.target.value,
     }));
@@ -104,13 +81,13 @@ const CreateFoodsCategory: React.FC<FoodCategoryType> = ({
     const imageRef = ref(storage, `create-category-image/${imageUpload.name}`);
     await uploadBytes(imageRef, imageUpload).then(async (snapshot) => {
       return await getDownloadURL(snapshot.ref).then((url) => {
-        return setCreateFoodsCategoryState((prev) => ({
+        return setCreateFoodsCategoryState((prev: FoodCategoryType) => ({
           ...prev,
           photoUrl: url,
         }));
       });
     });
-    setCreateFoodsCategoryState((prev) => ({
+    setCreateFoodsCategoryState((prev: FoodCategoryType) => ({
       ...prev,
       startTime: startTimeFood ?? "09:00",
       endTime: endTimeFood ?? "19:00",
@@ -134,48 +111,6 @@ const CreateFoodsCategory: React.FC<FoodCategoryType> = ({
       window.removeEventListener("keydown", handleKeydown);
     };
   }, [setOpenCreateGoodsProps]);
-
-  // const createUserForm = async (e: { preventDefault: () => void }) => {
-  //   e.preventDefault();
-
-  //   if (
-  //     createFoodsCategoryState.nameUz === "" ||
-  //     createFoodsCategoryState.nameRu === "" ||
-  //     createFoodsCategoryState.nameEn === "" ||
-  //     createFoodsCategoryState.startTime === "" ||
-  //     createFoodsCategoryState.endTime === "" ||
-  //     createFoodsCategoryState.status === "" ||
-  //     createFoodsCategoryState.photoUrl === null
-  //   ) {
-  //     setStatusCode("Malumotlar to'liq kiritilmagan");
-  //   }
-
-  //   try {
-  //     const res = await apiToken.post(
-  //       "/categories/create",
-  //       createFoodsCategoryState,
-  //       {
-  //         headers: {
-  //           Authorization: `Bearer ${token}`,
-  //         },
-  //       }
-  //     );
-
-  //     if (res.status === 200) {
-  //       setStatusCode("");
-  //       setSuccessStatus("Categoriya ro'yhatdan o'tkazildi");
-  //     }
-
-  //     console.log("response", res);
-  //   } catch (error) {
-  //     if (
-  //       error.response.data.errorMessage === "Category name is already exist"
-  //     ) {
-  //       setStatusCode("Bu kategoriya oldin ro'yxatdan o'tkazilgan");
-  //     }
-  //     console.log("error", error);
-  //   }
-  // };
 
   console.log("createFoodsCategoryState", createFoodsCategoryState);
 
@@ -275,10 +210,23 @@ const CreateFoodsCategory: React.FC<FoodCategoryType> = ({
                 <label htmlFor="inputFile" className="cursor-pointer">
                   <div className="text-[#7A7A7A]  font-semibold h-full flex items-center">
                     <div className="text-4xl ">
-                      {imageUpload?.name ? "" : <AddImgButton />}
+                      {imageUpload?.name ? (
+                        <img
+                          src={createFoodsCategoryState?.photoUrl}
+                          className="bg-repeat"
+                          alt=""
+                        />
+                      ) : (
+                        <AddImgButton />
+                      )}
                     </div>
+
                     <div className="font-normal ml-[10px]">
-                      {imageUpload?.name ?? "Rasm yuklash"}
+                      {imageUpload?.name ? (
+                        <img src={createFoodsCategoryState?.photoUrl} alt="" />
+                      ) : (
+                        "Rasm yuklash"
+                      )}
                     </div>
                   </div>
                   <input

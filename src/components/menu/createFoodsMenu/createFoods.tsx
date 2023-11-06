@@ -1,19 +1,23 @@
 import { useState, useCallback, useEffect, ChangeEvent } from "react";
-import { FoodCategoryType } from "./createFoodsType";
-import apiToken from "../../../api/token";
+import { FoodCategoryType, FoodCategoryTypeData } from "./createFoodsType";
+// import apiToken from "../../../api/token";
 // import { t } from "i18next";
 import { AddImgButton } from "../../../assets/logos/AddImgButton";
 import "./Foods.css";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { storage } from "../../../data/firebase";
-import { useAppSelector } from "../../../hook/redux";
+// import { useAppSelector } from "../../../hook/redux";
 // import { categoriesType } from "../../../redux/restoreRedux/restoreSliceType";
 
 type ImageType = File | null;
 
 const CreateFoods: React.FC<FoodCategoryType> = ({
   setOpenCreateGoodsProps,
-  id,
+  createFoodsCategoryState,
+  setCreateFoodsCategoryState,
+  statusCode,
+  successStatus,
+  createUserForm,
 }): JSX.Element => {
   // const categoryTypeListType = useAppSelector(
   //   (state) => state.restore.categoriesAll
@@ -22,30 +26,13 @@ const CreateFoods: React.FC<FoodCategoryType> = ({
   // const categoriesListData =
   //   categoryTypeListType[0] as unknown as categoriesType[];
 
-  const token = useAppSelector((state) => state.restore.token);
   const [imageUpload, setImageUpload] = useState<ImageType>(null);
   const [statusFood, setStatusFood] = useState<string>("ACTIVE");
-  const [statusCode, setStatusCode] = useState<string | null>("");
-  const [successStatus, setSuccessStatus] = useState("");
+
   const [foodType, setFoodType] = useState<string>("SIMPLE");
   // const [categoryType, setCategoryType] = useState<string>("Caategory Tanlang");
 
   console.log("statusFood", statusFood);
-
-  const [createFoodsCategoryState, setCreateFoodsCategoryState] = useState({
-    nameUz: "",
-    nameRu: "",
-    nameEn: "",
-    descriptionUz: "",
-    descriptionRu: "",
-    descriptionEn: "",
-    status: "",
-    photoUrl: "",
-    categoryId: id,
-    foodType: "",
-    price: 0,
-    kkal: 0,
-  });
 
   const handleInputChange = useCallback(
     (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -54,12 +41,12 @@ const CreateFoods: React.FC<FoodCategoryType> = ({
         [e.target.name]: e.target.value,
       });
     },
-    [createFoodsCategoryState]
+    [createFoodsCategoryState, setCreateFoodsCategoryState]
   );
 
   const handleFoodType = (e: ChangeEvent<HTMLSelectElement>) => {
     setFoodType(e.target.value);
-    setCreateFoodsCategoryState((prev) => ({
+    setCreateFoodsCategoryState((prev: FoodCategoryTypeData) => ({
       ...prev,
       foodType: e.target.value,
     }));
@@ -67,7 +54,7 @@ const CreateFoods: React.FC<FoodCategoryType> = ({
 
   const handleStatusChange = (e: ChangeEvent<HTMLSelectElement>) => {
     setStatusFood(e.target.value);
-    setCreateFoodsCategoryState((prev) => ({
+    setCreateFoodsCategoryState((prev: FoodCategoryTypeData) => ({
       ...prev,
       status: e.target.value,
     }));
@@ -84,13 +71,13 @@ const CreateFoods: React.FC<FoodCategoryType> = ({
     const imageRef = ref(storage, `create-foods-image/${imageUpload.name}`);
     await uploadBytes(imageRef, imageUpload).then(async (snapshot) => {
       return await getDownloadURL(snapshot.ref).then((url) => {
-        return setCreateFoodsCategoryState((prev) => ({
+        return setCreateFoodsCategoryState((prev: FoodCategoryTypeData) => ({
           ...prev,
           photoUrl: url,
         }));
       });
     });
-    setCreateFoodsCategoryState((prev) => ({
+    setCreateFoodsCategoryState((prev: FoodCategoryTypeData) => ({
       ...prev,
       foodType: foodType ?? "SIMPLE",
       status: statusFood ?? "ACTIVE",
@@ -114,49 +101,6 @@ const CreateFoods: React.FC<FoodCategoryType> = ({
     };
   }, [setOpenCreateGoodsProps]);
 
-  const createUserForm = async (e: { preventDefault: () => void }) => {
-    e.preventDefault();
-
-    if (
-      createFoodsCategoryState.nameUz === "" ||
-      createFoodsCategoryState.nameRu === "" ||
-      createFoodsCategoryState.nameEn === "" ||
-      createFoodsCategoryState.status === "" ||
-      createFoodsCategoryState.categoryId === "" ||
-      createFoodsCategoryState.foodType === "" ||
-      createFoodsCategoryState.photoUrl === null
-    ) {
-      setStatusCode("Malumotlar to'liq kiritilmagan");
-    }
-
-    try {
-      const res = await apiToken.post(
-        "/foods/create",
-        createFoodsCategoryState,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      if (res.status === 200) {
-        setStatusCode("");
-        setSuccessStatus("Ovqat ro'yhatdan o'tkazildi");
-        window.location.reload();
-      }
-
-      console.log("response", res);
-    } catch (error) {
-      if (
-        error.response.data.errorMessage === "Category name is already exist"
-      ) {
-        setStatusCode("Bu kategoriya oldin ro'yxatdan o'tkazilgan");
-      }
-      console.log("error", error);
-    }
-  };
-
   console.log("createFoodsCategoryState", createFoodsCategoryState);
 
   return (
@@ -164,9 +108,6 @@ const CreateFoods: React.FC<FoodCategoryType> = ({
       className="fixed left-[25%] top-[50px] bg-white w-[100vh] h-[90vh] 
      overflow-hidden z-10 rounded-xl py-[32px] px-[40px] flex flex-col gap-2"
     >
-      {/* <div className="flex justify-end">
-        <ModalClose />
-      </div> */}
       <div className="text-2xl font-medium ">Kategoriya malumotlari</div>
       <form
         onSubmit={createUserForm}

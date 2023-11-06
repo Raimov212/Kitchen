@@ -26,7 +26,7 @@ export interface categoriesType {
   endTime: string;
 }
 
-export interface foodsType {
+export interface FoodsType {
   id: string;
   name: string;
   description: string;
@@ -41,4 +41,6 @@ export interface RestoreDataType {
   foodList: foodListType[];
   categoriesAll: categoriesType[];
   foodsAll: foodsType[];
+  isLoading: boolean;
+  error: string | undefined;
 }

@@ -5,4 +5,9 @@ type LoginContextType = {
   setIsVisibleRoute: Dispatch<SetStateAction<boolean>>;
 };
 
-export const LoginContext = createContext<LoginContextType | boolean>(false);
+export const LoginContext = createContext<LoginContextType>({
+  isVisibleRoute: false,
+  setIsVisibleRoute: function (): void {
+    throw new Error("Function not implemented.");
+  },
+});

@@ -52,7 +52,7 @@ const LoginPage = () => {
         dispatch(tokenFunction(res.data.token));
       }
     } catch (error) {
-      if (error.response.status === 404) {
+      if (error) {
         setError("Login yoki parol xato");
       }
     }

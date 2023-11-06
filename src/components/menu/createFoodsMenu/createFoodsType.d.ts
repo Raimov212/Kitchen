@@ -7,8 +7,6 @@ export interface FoodCategoryAndWhereIdType {
 }
 
 export type FoodCategoryTypeData = {
-  endTime: string;
-  startTime: string;
   nameUz: string;
   nameRu: string;
   nameEn: string;
@@ -24,8 +22,13 @@ export type FoodCategoryTypeData = {
 };
 
 export type FoodCategoryType = {
-  // createFoodsCategoryState: FoodCategoryTypeData[];
-  // setCreateFoodsCategoryState: Dispatch<SetStateAction<FoodCategoryTypeData[]>>;
+  createFoodsCategoryState: FoodCategoryTypeData;
+  setCreateFoodsCategoryState: Dispatch<
+    SetStateAction<createFoodsCategoryState>
+  >;
+  statusCode: string;
+  successStatus: string;
+  createUserForm: (e: { preventDefault: () => void }) => Promise<void>;
   setOpenCreateGoodsProps: Dispatch<SetStateAction<boolean>>;
   id: string | undefined;
 };

@@ -1,20 +1,8 @@
-import { useState, useCallback, useEffect, ChangeEvent } from "react";
+import { useState, useEffect, ChangeEvent } from "react";
 import { FoodCategoryType } from "./createEmployeeType";
-// import { t } from "i18next";
-// import { ToastContainer, toast } from "react-toastify";
-// import { ModalClose } from "../../assets/logos/ModalClose";
-import { useAppSelector } from "../../hook/redux";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { storage } from "../../data/firebase";
 import { AddImgButton } from "../../assets/logos/AddImgButton";
-
-enum roleAdmin {
-  "ROLE_ADMIN" = "Admin",
-  "ROLE_DEVELOPER" = "Developer",
-  "ROLE_DIRECTOR" = "Director",
-  "ROLE_COOKER" = "Cooker",
-  "ROLE_SUPPLIER" = "Supplier",
-}
 
 const RoleData: string[] = [
   "ROLE_ADMIN",
@@ -23,8 +11,6 @@ const RoleData: string[] = [
   "ROLE_COOKER",
   "ROLE_SUPPLIER",
 ];
-
-type RoleStrings = keyof typeof roleAdmin;
 
 const CreateEmployee: React.FC<FoodCategoryType> = ({
   setOpenCreateGoodsProps,
@@ -37,20 +23,18 @@ const CreateEmployee: React.FC<FoodCategoryType> = ({
   const [roleState, setRoleState] = useState("ROLE_ADMIN");
   const [imageUpload, setImageUpload] = useState<File | null>(null);
 
-  const handleInputChange = useCallback(
-    (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      setCreateFoodsCategoryState({
-        ...createFoodsCategoryState,
-        [e.target.name]: e.target.value,
-      });
-    },
-    [createFoodsCategoryState]
-  );
+  const handleInputChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setCreateFoodsCategoryState({
+      ...createFoodsCategoryState,
+      [e.target.name]: e.target.value,
+    });
+  };
 
   const handleRoleChange = (e: ChangeEvent<HTMLSelectElement>) => {
-    const result: RoleStrings = e.target.value;
+    const result = e.target.value;
     setRoleState(e.target.value);
-    console.log("res", roleAdmin[result]);
     setCreateFoodsCategoryState((prev) => ({
       ...prev,
       role: result.toString(),
@@ -165,7 +149,7 @@ const CreateEmployee: React.FC<FoodCategoryType> = ({
           >
             {RoleData.map((item, index) => (
               <option key={index} value={item}>
-                {roleAdmin[item]}
+                {item}
               </option>
             ))}
           </select>

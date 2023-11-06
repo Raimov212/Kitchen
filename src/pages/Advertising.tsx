@@ -29,7 +29,9 @@ const Advertising = () => {
       });
       if (res.status === 200) {
         setAdvertisingData(res.data);
+        setOpenCreateUsers(false);
       }
+      console.log("res", res);
       // console.log("res", res);
     } catch (error) {
       console.log(error);
@@ -45,7 +47,8 @@ const Advertising = () => {
 
     if (res.status === 200) {
       setOpenDeleteModal((prev) => !prev);
-      window.location.reload();
+      getAdvertising();
+      setOpenDeleteModal(false);
     }
     console.log("res", res);
   };
